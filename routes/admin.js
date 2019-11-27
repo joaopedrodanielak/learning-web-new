@@ -13,7 +13,7 @@ router.get('/posts',(req,res)=>{
 })
 
 router.get('/categorias',(req,res)=>{
-    Categoria.find().then((categorias)=>{
+    Categoria.find().sort({date : "desc"}).then((categorias)=>{
         res.render("admin/categorias",{categorias : categorias})
     }).catch((err)=>{
         req.flash("error_msg", "houve um erro ao listar as categorias")
@@ -56,6 +56,38 @@ router.post('/categorias/nova',(req,res)=>{
         })
     }
 
+
+})
+
+router.get('/categorias/edit/:id',(req,res)=>{
+    Categoria.findById({_id:req.params.id}).then((categoria)=>{
+        res.render("admin/editcategorias",{categoria:categoria})
+    }).catch((err)=>{
+        req.flash('error_msg','Infelizmente essa categoria não existe' + err)
+        res.redirect('/admin/categorias')
+    })
+
+    
+})
+
+router.post('/categorias/edit',(req,res)=>{
+    
+    Categoria.findOne({_id: req.body.id}).then((categoria)=>{
+        categoria.nome = req.body.nome
+        categoria.slug = req.body.slug
+
+        categoria.save().then(()=>{
+            req.flash("success_msg","Categoria Editada com Sucesso")
+            res.redirect('/admin/categorias')
+        }).catch((err)=>{
+            req.flash("error_msg","Infelizmente houve um erro ao salvar a edição da categoria")
+            res.redirect("/admin/categorias")
+        })
+
+    }).catch((err)=>{
+        req.flash("error_msg", "erro ao editar")
+        res.redirect('/admin/categorias')
+    })
 
 })
 
