@@ -91,7 +91,22 @@ router.post('/categorias/edit',(req,res)=>{
 
 })
 
-router.get('/teste',(req,res)=>{
-    res.send('teste')
+router.post("/categorias/deletar",(req,res)=>{
+    Categoria.remove({_id: req.body.id}).then(()=>{
+        req.flash("success_msg","Categoria Deletada com Sucesso")
+        res.redirect("/admin/categorias")
+    }).catch((err)=>{
+        req.flash("error_msg","Infelizmente houve um erro ao deletar a categoria :"+err)
+        res.redirect("/admin/categorias")
+    })
+
+})
+
+router.get('/postagens',(req,res)=>{
+    res.render('admin/postagens')
+})
+
+router.get('/postagens/add',(req,res)=>{
+    res.render("admin/addpostagens")
 })
 module.exports = router
